@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Per-event themeable tokens. Defaults = RUMA Onam 2026 (Kerala palette).
+ * An event row can override these at runtime via an inline style on <body>,
+ * enabling Vishu / Christmas / Sports Day themes with no code changes.
+ */
+:root {
+  --brand-primary: #0f6a4a; /* Kerala Green */
+  --brand-accent: #d4a017; /* Onam Gold */
+  --brand-background: #fffdf8; /* Warm Ivory */
+  --brand-surface: #f8f3e8; /* Soft Cream */
+  --brand-maroon: #7a1e1e; /* Deep Maroon */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-charcoal antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  /* Clear, visible focus states for keyboard users (accessibility req) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-kerala ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* Editorial display heading helper */
+  .font-display {
+    font-family: var(--font-fraunces), Georgia, serif;
+  }
+
+  /* Warm paper texture — subtle grain for premium, tactile surfaces */
+  .paper {
+    background-color: var(--brand-background);
+    background-image:
+      radial-gradient(
+        circle at 50% 0%,
+        color-mix(in srgb, var(--brand-accent) 6%, transparent),
+        transparent 60%
+      ),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  /* Kasavu-inspired gold hairline used on ticket + festive dividers */
+  .kasavu-line {
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--brand-accent),
+      var(--brand-accent) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  }
+}
+
+/* Loader: steady rotation + gentle breathing */
+@keyframes ruma-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ruma-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* Loader shimmer bar */
+@keyframes ruma-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(360%);
+  }
+}
+
+/* Pookalam "building up": each petal grows outward from the centre, staggered,
+   forming the flower, then dissolves and rebuilds. --r = petal angle. */
+@keyframes petal-form {
+  0% {
+    transform: rotate(var(--r)) translateY(-5px) scale(0);
+    opacity: 0;
+  }
+  30% {
+    transform: rotate(var(--r)) translateY(-20px) scale(1);
+    opacity: 1;
+  }
+  78% {
+    transform: rotate(var(--r)) translateY(-20px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--r)) translateY(-20px) scale(1);
+    opacity: 0.12;
+  }
+}
+
+/* Centre seed pops in as the petals settle. */
+@keyframes seed-pop {
+  0%,
+  55% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  85% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}
+
+/* Subtle pookalam watermark: concentric petals, low opacity. SVG-free, pure CSS. */
+.pookalam-watermark {
+  background-image: radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--brand-accent) 22%, transparent) 0 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 0 26px,
+      color-mix(in srgb, var(--brand-primary) 10%, transparent) 26px 28px,
+      transparent 28px
+    );
+  background-size:
+    18px 18px,
+    64px 64px;
+  background-position: center;
+}
