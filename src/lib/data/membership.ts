@@ -56,6 +56,7 @@ export async function createFamily(
     full_name: m.fullName,
     relationship: m.relationship,
     age_group: m.ageGroup,
+    blood_group: m.bloodGroup === "unknown" ? null : m.bloodGroup,
   }));
   const { error: memberError } = await supabase.from("members").insert(members);
   if (memberError) {

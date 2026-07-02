@@ -31,8 +31,9 @@ export default async function EditFamilyPage({
           fullName: m.full_name,
           relationship: m.relationship,
           ageGroup: m.age_group,
+          bloodGroup: (m.blood_group ?? "unknown") as MembershipInput["members"][number]["bloodGroup"],
         }))
-      : [{ fullName: "", relationship: "head", ageGroup: "13_plus" }],
+      : [{ fullName: "", relationship: "head", ageGroup: "13_plus", bloodGroup: "unknown" }],
   };
 
   return (

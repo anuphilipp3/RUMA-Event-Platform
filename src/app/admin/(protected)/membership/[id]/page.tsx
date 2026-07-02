@@ -94,10 +94,15 @@ export default async function MembershipDetailPage({
           </h3>
           <ul className="divide-y divide-gold/15">
             {members.map((m) => (
-              <li key={m.id} className="flex items-center justify-between py-2 text-body">
+              <li key={m.id} className="flex items-center justify-between gap-2 py-2 text-body">
                 <span className="font-medium text-charcoal">{m.full_name}</span>
-                <span className="text-small text-text-secondary">
+                <span className="flex items-center gap-2 text-small text-text-secondary">
                   {RELATIONSHIP_LABEL[m.relationship]} · {AGE_GROUP_LABEL[m.age_group]}
+                  {m.blood_group && (
+                    <span className="rounded bg-maroon/10 px-1.5 py-0.5 text-caption font-semibold text-maroon">
+                      {m.blood_group}
+                    </span>
+                  )}
                 </span>
               </li>
             ))}

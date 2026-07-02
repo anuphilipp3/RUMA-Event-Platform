@@ -342,6 +342,7 @@ export interface Database {
           full_name: string;
           relationship: MemberRelationship;
           age_group: AgeGroup;
+          blood_group: string | null;
           created_at: string;
         };
         Insert: {
@@ -350,6 +351,7 @@ export interface Database {
           full_name: string;
           relationship: MemberRelationship;
           age_group: AgeGroup;
+          blood_group?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["members"]["Insert"]>;

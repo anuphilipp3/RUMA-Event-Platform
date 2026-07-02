@@ -25,6 +25,8 @@ import { Card } from "@/components/ui/card";
 import { cn, formatINR } from "@/lib/utils";
 import {
   membershipSchema,
+  BLOOD_GROUPS,
+  BLOOD_GROUP_LABEL,
   type MembershipInput,
   type MembershipPlan,
 } from "@/lib/domain/membership";
@@ -74,7 +76,9 @@ export function MembershipFlow({
       phone: "",
       email: "",
       membershipType: plans[0]?.key ?? "annual",
-      members: [{ fullName: "", relationship: "head", ageGroup: "13_plus" }],
+      members: [
+        { fullName: "", relationship: "head", ageGroup: "13_plus", bloodGroup: "unknown" },
+      ],
     },
   });
   const { register, control, handleSubmit, trigger, watch, setValue, formState } =
@@ -213,15 +217,39 @@ export function MembershipFlow({
                       </select>
                     </div>
                   </div>
+                  <div className="mt-3">
+                    <Label>Blood group</Label>
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {BLOOD_GROUPS.map((bg) => {
+                        const selected = watch(`members.${i}.bloodGroup`) === bg;
+                        return (
+                          <button
+                            key={bg}
+                            type="button"
+                            onClick={() => setValue(`members.${i}.bloodGroup`, bg)}
+                            aria-pressed={selected}
+                            className={cn(
+                              "min-w-[3rem] rounded-md border px-3 py-2 text-small font-semibold transition-colors",
+                              selected
+                                ? "border-kerala-600 bg-kerala-600 text-white"
+                                : "border-field bg-white text-charcoal hover:border-kerala-600/60",
+                            )}
+                          >
+                            {BLOOD_GROUP_LABEL[bg]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                   {members.fields.length > 1 && (
-                    <button type="button" onClick={() => members.remove(i)} className="mt-2 inline-flex items-center gap-1 text-small text-maroon hover:underline">
+                    <button type="button" onClick={() => members.remove(i)} className="mt-3 inline-flex items-center gap-1 text-small text-maroon hover:underline">
                       <Trash2 className="h-4 w-4" /> Remove
                     </button>
                   )}
                 </Card>
               ))}
             </div>
-            <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={() => members.append({ fullName: "", relationship: "child", ageGroup: "13_plus" })}>
+            <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={() => members.append({ fullName: "", relationship: "child", ageGroup: "13_plus", bloodGroup: "unknown" })}>
               <Plus /> Add member
             </Button>
             <StepNav onBack={() => setStep("details")} onNext={goToPlan} nextLabel="Choose plan" />

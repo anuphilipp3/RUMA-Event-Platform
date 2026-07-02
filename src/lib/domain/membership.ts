@@ -166,12 +166,40 @@ export const AGE_GROUP_LABEL: Record<AgeGroup, string> = {
   "13_plus": "13 and above",
 };
 
+// ── Blood group ─────────────────────────────────────────────────────────────
+
+export const BLOOD_GROUPS = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "O+",
+  "O-",
+  "AB+",
+  "AB-",
+  "unknown",
+] as const;
+export type BloodGroup = (typeof BLOOD_GROUPS)[number];
+
+export const BLOOD_GROUP_LABEL: Record<BloodGroup, string> = {
+  "A+": "A+",
+  "A-": "A−",
+  "B+": "B+",
+  "B-": "B−",
+  "O+": "O+",
+  "O-": "O−",
+  "AB+": "AB+",
+  "AB-": "AB−",
+  unknown: "Not known",
+};
+
 // ── Membership registration validation ──────────────────────────────────────
 
 export const memberSchema = z.object({
   fullName: z.string().trim().min(2, "Member name is required").max(80),
   relationship: z.enum(["head", "spouse", "child", "parent", "other"]),
   ageGroup: z.enum(["under_5", "5_12", "13_plus"]),
+  bloodGroup: z.enum(BLOOD_GROUPS).default("unknown"),
 });
 
 export const membershipSchema = z.object({
