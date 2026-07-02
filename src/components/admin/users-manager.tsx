@@ -115,15 +115,17 @@ export function UsersManager({
               className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0">
-                <p className="flex items-center gap-2 text-body font-semibold text-charcoal">
-                  {u.fullName ?? u.email}
+                <p className="flex min-w-0 items-center gap-2 text-body font-semibold text-charcoal">
+                  <span className="truncate">{u.fullName ?? u.email}</span>
                   {isSelf && (
-                    <span className="rounded bg-cream px-1.5 py-0.5 text-caption text-text-secondary">
+                    <span className="shrink-0 rounded bg-cream px-1.5 py-0.5 text-caption text-text-secondary">
                       You
                     </span>
                   )}
                 </p>
-                <p className="truncate text-small text-text-secondary">{u.email}</p>
+                {u.fullName && (
+                  <p className="truncate text-small text-text-secondary">{u.email}</p>
+                )}
                 <p className="text-caption text-text-muted">
                   {u.lastSignInAt
                     ? `Last active ${new Date(u.lastSignInAt).toLocaleDateString("en-IN")}`
@@ -198,13 +200,13 @@ function PasswordReset({ userId }: { userId: string }) {
     );
   }
   return (
-    <span className="flex items-center gap-1.5">
+    <div className="flex w-full flex-wrap items-center gap-2">
       <Input
         type="text"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="New password (min 8)"
-        className="h-10 w-44"
+        className="h-10 w-full min-w-0 sm:w-44"
       />
       <Button size="sm" onClick={save} disabled={saving || password.length < 8}>
         {saving ? <Loader2 className="animate-spin" /> : "Save"}
@@ -212,7 +214,7 @@ function PasswordReset({ userId }: { userId: string }) {
       <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
         Cancel
       </Button>
-    </span>
+    </div>
   );
 }
 

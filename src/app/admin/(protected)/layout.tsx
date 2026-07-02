@@ -15,7 +15,7 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-dvh bg-ivory">
       <AdminNav email={admin.email} role={admin.role} brand={brand} />
-      <main className="min-w-0 flex-1 pl-20 md:pl-0">
+      <main className="min-w-0 flex-1 overflow-x-hidden pl-20 md:pl-0">
         <div className="mx-auto max-w-5xl px-4 py-6 md:px-8 md:py-8">
           {children}
         </div>
