@@ -86,27 +86,60 @@ export function AdminNav({
         </div>
       </aside>
 
-      {/* Mobile bottom bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-gold/20 bg-ivory/95 backdrop-blur md:hidden">
-        {links.map((l) => {
-          const active = l.exact
-            ? pathname === l.href
-            : pathname.startsWith(l.href);
-          const Icon = l.icon;
-          return (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={cn(
-                "flex flex-1 flex-col items-center gap-0.5 py-2 text-caption",
-                active ? "text-kerala-700" : "text-text-muted",
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              {l.label}
-            </Link>
-          );
-        })}
+      {/* Mobile left rail — slim, scrollable, icon + label */}
+      <nav className="fixed inset-y-0 left-0 z-40 flex w-20 flex-col border-r border-gold/20 bg-ivory/95 backdrop-blur md:hidden">
+        <Link
+          href="/admin"
+          aria-label={`${brand.name} home`}
+          className="flex h-14 shrink-0 items-center justify-center border-b border-gold/15"
+        >
+          {brand.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={brand.logoUrl}
+              alt=""
+              className="h-9 w-9 rounded-lg object-contain"
+            />
+          ) : (
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-kerala-600 font-display text-lg font-bold text-white">
+              {brand.name.charAt(0)}
+            </span>
+          )}
+        </Link>
+
+        <div className="flex-1 space-y-1 overflow-y-auto px-1.5 py-2">
+          {links.map((l) => {
+            const active = l.exact
+              ? pathname === l.href
+              : pathname.startsWith(l.href);
+            const Icon = l.icon;
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-[10px] font-medium leading-tight transition-colors",
+                  active
+                    ? "bg-kerala-600 text-white"
+                    : "text-text-muted hover:bg-cream",
+                )}
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                {l.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <form
+          action={signOutAction}
+          className="shrink-0 border-t border-gold/15 px-1.5 py-2"
+        >
+          <button className="flex w-full flex-col items-center gap-1 rounded-lg px-1 py-2 text-[10px] font-medium text-text-muted transition-colors hover:bg-cream">
+            <LogOut className="h-5 w-5" /> Sign out
+          </button>
+        </form>
       </nav>
     </>
   );
