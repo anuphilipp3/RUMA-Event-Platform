@@ -70,12 +70,14 @@ export function EventsBrowser({ rows }: { rows: AdminEventListRow[] }) {
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-body font-semibold text-charcoal">
+                    <p className="min-w-0 truncate text-body font-semibold text-charcoal">
                       {e.name}
                     </p>
-                    <Badge variant={variant(e.status, ended)}>
-                      {ended ? "Ended" : e.status}
-                    </Badge>
+                    <span className="shrink-0">
+                      <Badge variant={variant(e.status, ended)}>
+                        {ended ? "Ended" : e.status}
+                      </Badge>
+                    </span>
                   </div>
                   <p className="text-small text-text-secondary">
                     {formatEventDate(e.start_date, e.end_date)}

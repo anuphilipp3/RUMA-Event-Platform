@@ -1,8 +1,9 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { RumaMark } from "@/components/shared/ruma-mark";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,13 @@ function LoginForm() {
             )}
           </Button>
         </form>
+
+        <Link
+          href="/"
+          className="mt-6 flex items-center justify-center gap-1.5 text-small text-text-secondary transition-colors hover:text-kerala-700"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to home
+        </Link>
       </div>
     </div>
   );

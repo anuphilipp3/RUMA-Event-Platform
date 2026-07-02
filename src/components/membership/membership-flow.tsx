@@ -103,7 +103,15 @@ export function MembershipFlow({
       "phone",
       "email",
     ]);
-    if (ok) setStep("members");
+    if (!ok) return;
+    // Pre-add the primary contact as the first family member, so they don't
+    // wonder whether to add themselves again.
+    const primary = watch("primaryContact").trim();
+    if (primary && !watch("members.0.fullName")?.trim()) {
+      setValue("members.0.fullName", primary);
+      setValue("members.0.relationship", "head");
+    }
+    setStep("members");
   }
   async function goToPlan() {
     const ok = await trigger("members");
@@ -189,13 +197,18 @@ export function MembershipFlow({
         )}
 
         {step === "members" && (
-          <Section title="Family members" description="Add everyone in your household.">
+          <Section title="Family members" description="You're already added below — just add your spouse, children and other family members.">
             {typeof formState.errors.members?.message === "string" && (
               <p className="mb-2 text-small text-maroon">{formState.errors.members.message}</p>
             )}
             <div className="space-y-3">
               {members.fields.map((f, i) => (
                 <Card key={f.id} className="p-4">
+                  {i === 0 && (
+                    <span className="mb-2 inline-flex rounded-full bg-kerala-50 px-2.5 py-0.5 text-caption font-semibold text-kerala-700">
+                      You · primary contact
+                    </span>
+                  )}
                   <FormField label="Name" error={formState.errors.members?.[i]?.fullName?.message}>
                     <Input {...register(`members.${i}.fullName`)} placeholder="Full name" />
                   </FormField>

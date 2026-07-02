@@ -23,19 +23,21 @@ export function StatCard({
         : "bg-kerala-50 text-kerala-600";
 
   return (
-    <Card className="p-5">
-      <div className="flex items-start justify-between">
-        <p className="text-small font-medium text-text-secondary">{label}</p>
+    <Card className="p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="min-w-0 text-small font-medium text-text-secondary">
+          {label}
+        </p>
         <span
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-md",
+            "hidden h-9 w-9 shrink-0 items-center justify-center rounded-md sm:flex",
             accentCls,
           )}
         >
           <Icon className="h-5 w-5" />
         </span>
       </div>
-      <p className="mt-2 text-page-title font-bold text-charcoal tabular-nums">
+      <p className="mt-2 text-2xl font-bold text-charcoal tabular-nums sm:text-page-title">
         {value}
       </p>
       {hint && <p className="mt-0.5 text-caption text-text-muted">{hint}</p>}

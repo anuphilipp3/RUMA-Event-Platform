@@ -131,7 +131,7 @@ export function UsersManager({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
                 <Badge variant={STATUS_VARIANT[u.status]}>{u.status}</Badge>
                 {isSelf ? (
                   <span className="flex items-center gap-1 rounded-md border border-gold/30 px-3 py-2 text-small text-text-secondary">

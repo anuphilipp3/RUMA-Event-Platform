@@ -52,7 +52,7 @@ export function ListToolbar({
       )}
 
       {view && onView && (
-        <div className="flex shrink-0 rounded-md border border-field bg-white p-0.5">
+        <div className="flex shrink-0 rounded-lg border border-field bg-white p-0.5">
           <ToggleBtn active={view === "list"} onClick={() => onView("list")} label="List">
             <List className="h-4 w-4" />
           </ToggleBtn>
@@ -83,7 +83,7 @@ function ToggleBtn({
       aria-label={`${label} view`}
       aria-pressed={active}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded",
+        "flex h-9 w-9 items-center justify-center rounded-md",
         active ? "bg-kerala-600 text-white" : "text-text-secondary hover:bg-cream",
       )}
     >

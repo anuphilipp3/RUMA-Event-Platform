@@ -52,10 +52,12 @@ export function RegistrationsBrowser({ rows }: { rows: RegistrationListRow[] }) 
             <Link key={r.id} href={`/admin/registrations/${r.id}`}>
               <Card className="h-full p-4 transition-colors hover:border-gold/50 hover:bg-cream">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="truncate text-body font-semibold text-charcoal">
+                  <p className="min-w-0 truncate text-body font-semibold text-charcoal">
                     {r.full_name}
                   </p>
-                  <StatusBadge status={r.status} />
+                  <span className="shrink-0">
+                    <StatusBadge status={r.status} />
+                  </span>
                 </div>
                 <p className="mt-0.5 text-small text-text-secondary">
                   Flat {r.flat_number}
