@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { StatusBadge } from "@/components/shared/status-badge";
 import type { TicketStatus } from "@/lib/supabase/database.types";
 
@@ -75,6 +76,15 @@ export function TicketCard({ ticket }: { ticket: TicketCardData }) {
         <div className="mt-4 flex justify-center">
           <StatusBadge status={ticket.status} />
         </div>
+
+        <a
+          href={`/api/bookings/${ticket.bookingReference}/pdf?ticket=${encodeURIComponent(ticket.ticketNumber)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-kerala-600/40 px-3 py-2 text-small font-semibold text-kerala-700 transition-colors hover:bg-kerala-600 hover:text-white"
+        >
+          <Download className="h-4 w-4" /> Download this ticket
+        </a>
       </div>
     </article>
   );

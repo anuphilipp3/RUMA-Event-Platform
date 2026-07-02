@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ reference: string }> },
 ) {
   const { reference } = await params;
@@ -25,8 +25,17 @@ export async function GET(
     );
   }
 
+  // Optional single-ticket download: /pdf?ticket=<ticket_number>
+  const wanted = request.nextUrl.searchParams.get("ticket");
+  const selected = wanted
+    ? booking.tickets.filter((t) => t.ticket_number === wanted)
+    : booking.tickets;
+  if (selected.length === 0) {
+    return NextResponse.json({ error: "Ticket not found." }, { status: 404 });
+  }
+
   const tickets = await Promise.all(
-    booking.tickets.map(async (t) => ({
+    selected.map(async (t) => ({
       ticketNumber: t.ticket_number,
       ticketTypeName: t.ticket_type.name,
       status: t.status,
@@ -49,7 +58,7 @@ export async function GET(
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename="ruma-tickets-${booking.registration.booking_reference}.pdf"`,
+      "Content-Disposition": `inline; filename="ruma-ticket${wanted ? `-${wanted}` : "s"}-${booking.registration.booking_reference}.pdf"`,
       "Cache-Control": "no-store",
     },
   });

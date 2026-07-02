@@ -26,88 +26,146 @@ export interface TicketPdfProps {
 const KERALA = "#0F6A4A";
 const GOLD = "#D4A017";
 const IVORY = "#FFFDF8";
-const CREAM = "#F8F3E8";
 const CHARCOAL = "#1F2933";
 const MUTED = "#667085";
 
-const styles = StyleSheet.create({
-  page: { backgroundColor: IVORY, padding: 28, fontSize: 11, color: CHARCOAL },
-  brand: { fontSize: 10, color: MUTED, marginBottom: 12, letterSpacing: 1 },
-  ticket: {
+const s = StyleSheet.create({
+  // Portrait A4, one ticket centred per page.
+  page: {
+    backgroundColor: IVORY,
+    paddingVertical: 48,
+    paddingHorizontal: 60,
+    color: CHARCOAL,
+    alignItems: "center",
+  },
+  card: {
+    width: 300,
     borderWidth: 1,
     borderColor: GOLD,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
     overflow: "hidden",
   },
   header: {
     backgroundColor: KERALA,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-  },
-  headerLabel: { color: GOLD, fontSize: 8, letterSpacing: 2 },
-  headerTitle: { color: "#FFFFFF", fontSize: 13, fontWeight: 700 },
-  body: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 14,
-    backgroundColor: CREAM,
-  },
-  fields: { flexGrow: 1, paddingRight: 12 },
-  label: { fontSize: 7, color: MUTED, textTransform: "uppercase", marginTop: 6 },
-  value: { fontSize: 11, color: CHARCOAL },
-  qrWrap: {
+    paddingVertical: 20,
+    paddingHorizontal: 22,
     alignItems: "center",
-    justifyContent: "center",
-    borderLeftWidth: 1,
-    borderLeftColor: GOLD,
-    borderStyle: "dashed",
-    paddingLeft: 12,
   },
-  qr: { width: 96, height: 96 },
-  scan: { fontSize: 7, color: MUTED, marginTop: 3 },
-  footer: { fontSize: 8, color: MUTED, textAlign: "center", marginTop: 8 },
+  goldLine: { height: 3, backgroundColor: GOLD },
+  eyebrow: { color: GOLD, fontSize: 8, letterSpacing: 3 },
+  eventName: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: 700,
+    marginTop: 6,
+    textAlign: "center",
+  },
+  typePill: {
+    marginTop: 10,
+    backgroundColor: GOLD,
+    color: CHARCOAL,
+    fontSize: 8,
+    fontWeight: 700,
+    letterSpacing: 1,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+  },
+  body: { paddingVertical: 22, paddingHorizontal: 24, alignItems: "center" },
+  smallLabel: {
+    fontSize: 7,
+    color: MUTED,
+    textTransform: "uppercase",
+    letterSpacing: 1.5,
+  },
+  attendee: { fontSize: 16, fontWeight: 700, color: CHARCOAL, marginTop: 2 },
+  flat: { fontSize: 10, color: MUTED, marginTop: 1 },
+  qr: {
+    width: 168,
+    height: 168,
+    marginVertical: 18,
+    borderWidth: 1,
+    borderColor: "#EAE3D2",
+    borderRadius: 10,
+    padding: 6,
+  },
+  scan: { fontSize: 7, color: MUTED, letterSpacing: 2, textTransform: "uppercase" },
+  divider: {
+    width: "100%",
+    borderTopWidth: 1,
+    borderTopColor: "#EAE3D2",
+    borderStyle: "dashed",
+    marginTop: 18,
+    paddingTop: 12,
+  },
+  row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
+  rowLabel: { fontSize: 7, color: MUTED, textTransform: "uppercase", letterSpacing: 1 },
+  rowValue: { fontSize: 9, fontWeight: 700, color: CHARCOAL },
+  footer: {
+    marginTop: 20,
+    fontSize: 8,
+    color: MUTED,
+    textAlign: "center",
+    maxWidth: 300,
+  },
 });
+
+function TicketPage({
+  t,
+  props,
+}: {
+  t: PdfTicket;
+  props: TicketPdfProps;
+}) {
+  return (
+    <Page size="A4" style={s.page}>
+      <View style={s.card}>
+        <View style={s.header}>
+          <Text style={s.eyebrow}>RUMA ONAM · DIGITAL PASS</Text>
+          <Text style={s.eventName}>{props.eventName}</Text>
+          <Text style={s.typePill}>{t.ticketTypeName}</Text>
+        </View>
+        <View style={s.goldLine} />
+
+        <View style={s.body}>
+          <Text style={s.smallLabel}>Attendee</Text>
+          <Text style={s.attendee}>{props.attendeeName}</Text>
+          <Text style={s.flat}>Flat {props.flatNumber}</Text>
+
+          <Image style={s.qr} src={t.qrPngDataUrl} />
+          <Text style={s.scan}>Scan at entry</Text>
+
+          <View style={s.divider}>
+            <View style={s.row}>
+              <Text style={s.rowLabel}>Ticket No.</Text>
+              <Text style={s.rowValue}>{t.ticketNumber}</Text>
+            </View>
+            <View style={s.row}>
+              <Text style={s.rowLabel}>Booking</Text>
+              <Text style={s.rowValue}>{props.bookingReference}</Text>
+            </View>
+            <View style={s.row}>
+              <Text style={s.rowLabel}>Venue</Text>
+              <Text style={s.rowValue}>{props.venue}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <Text style={s.footer}>
+        Show this pass and the QR code at the entrance. One QR per attendee.
+      </Text>
+    </Page>
+  );
+}
 
 export function TicketPdf(props: TicketPdfProps) {
   return (
     <Document title={`RUMA Tickets — ${props.bookingReference}`}>
-      <Page size="A4" style={styles.page}>
-        <Text style={styles.brand}>RUMA ONAM · DIGITAL PASS</Text>
-
-        {props.tickets.map((t) => (
-          <View key={t.ticketNumber} style={styles.ticket} wrap={false}>
-            <View style={styles.header}>
-              <Text style={styles.headerLabel}>RUMA ONAM</Text>
-              <Text style={styles.headerTitle}>{props.eventName}</Text>
-            </View>
-            <View style={styles.body}>
-              <View style={styles.fields}>
-                <Text style={styles.label}>Attendee</Text>
-                <Text style={styles.value}>{props.attendeeName}</Text>
-                <Text style={styles.label}>Flat / Ticket Type</Text>
-                <Text style={styles.value}>
-                  {props.flatNumber} · {t.ticketTypeName}
-                </Text>
-                <Text style={styles.label}>Ticket Number</Text>
-                <Text style={styles.value}>{t.ticketNumber}</Text>
-                <Text style={styles.label}>Booking</Text>
-                <Text style={styles.value}>{props.bookingReference}</Text>
-                <Text style={styles.label}>Venue</Text>
-                <Text style={styles.value}>{props.venue}</Text>
-              </View>
-              <View style={styles.qrWrap}>
-                <Image style={styles.qr} src={t.qrPngDataUrl} />
-                <Text style={styles.scan}>Scan at entry</Text>
-              </View>
-            </View>
-          </View>
-        ))}
-
-        <Text style={styles.footer}>
-          Show this pass and the QR code at the entrance. One QR per attendee.
-        </Text>
-      </Page>
+      {props.tickets.map((t) => (
+        <TicketPage key={t.ticketNumber} t={t} props={props} />
+      ))}
     </Document>
   );
 }
