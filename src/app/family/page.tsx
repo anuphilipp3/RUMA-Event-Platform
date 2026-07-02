@@ -2,16 +2,20 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { SiteHeader } from "@/components/public/site-header";
+import { PrefixedReferenceInput } from "@/components/public/prefixed-reference-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const metadata: Metadata = { title: "Find my family · RUMA" };
 
+const PREFIX = "RUMA-FAM-";
+
 async function lookup(formData: FormData) {
   "use server";
-  const ref = String(formData.get("reference") ?? "").trim().toUpperCase();
-  if (ref) redirect(`/family/${encodeURIComponent(ref)}`);
+  // Accept either the unique part (e.g. "AB12") or a full pasted code.
+  const raw = String(formData.get("reference") ?? "").trim().toUpperCase();
+  const suffix = raw.replace(/^RUMA-FAM-/, "").replace(/[^A-Z0-9]/g, "");
+  if (suffix) redirect(`/family/${encodeURIComponent(PREFIX + suffix)}`);
 }
 
 export default function FamilyLookupPage() {
@@ -33,14 +37,16 @@ export default function FamilyLookupPage() {
             <Label htmlFor="reference" required>
               Membership Reference
             </Label>
-            <Input
+            <PrefixedReferenceInput
               id="reference"
               name="reference"
-              required
-              autoCapitalize="characters"
-              placeholder="RUMA-FAM-XXXX"
-              className="uppercase"
+              prefix={PREFIX}
+              placeholder="AB12"
+              maxLength={12}
             />
+            <p className="mt-1.5 text-caption text-text-muted">
+              Just the last part of your reference — e.g. AB12.
+            </p>
           </div>
           <Button type="submit" size="lg" className="w-full">
             View Family

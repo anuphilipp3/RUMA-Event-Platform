@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Search } from "lucide-react";
 import { SiteHeader } from "@/components/public/site-header";
+import { PrefixedReferenceInput } from "@/components/public/prefixed-reference-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const metadata: Metadata = { title: "Find my ticket · RUMA Events" };
 
+const PREFIX = "RUMA-";
+
 async function lookup(formData: FormData) {
   "use server";
-  const ref = String(formData.get("reference") ?? "")
-    .trim()
-    .toUpperCase();
-  if (ref) redirect(`/booking/${encodeURIComponent(ref)}`);
+  // Accept the unique part ("ABCD-EF12" or "ABCDEF12") or a full pasted code.
+  const raw = String(formData.get("reference") ?? "").trim().toUpperCase();
+  let code = raw.replace(/^RUMA-/, "").replace(/[^A-Z0-9]/g, "");
+  if (code.length === 8) code = `${code.slice(0, 4)}-${code.slice(4)}`;
+  if (code) redirect(`/booking/${encodeURIComponent(PREFIX + code)}`);
 }
 
 export default function BookingLookupPage() {
@@ -36,14 +39,16 @@ export default function BookingLookupPage() {
             <Label htmlFor="reference" required>
               Booking Reference
             </Label>
-            <Input
+            <PrefixedReferenceInput
               id="reference"
               name="reference"
-              required
-              autoCapitalize="characters"
-              placeholder="RUMA-XXXX-XXXX"
-              className="uppercase"
+              prefix={PREFIX}
+              placeholder="ABCD-EF12"
+              maxLength={14}
             />
+            <p className="mt-1.5 text-caption text-text-muted">
+              The part after RUMA- from your registration — e.g. ABCD-EF12.
+            </p>
           </div>
           <Button type="submit" size="lg" className="w-full">
             View Booking
