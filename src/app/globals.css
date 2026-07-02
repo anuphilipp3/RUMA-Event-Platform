@@ -85,6 +85,25 @@
   }
 }
 
+/* Announcement ticker: track holds two identical halves; sliding by -50%
+   loops one full half seamlessly. Compositor-friendly (transform only). */
+@keyframes ruma-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ruma-marquee {
+  animation: ruma-marquee 26s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ruma-marquee {
+    animation: none;
+  }
+}
+
 /* Pookalam "building up": each petal grows outward from the centre, staggered,
    forming the flower, then dissolves and rebuilds. --r = petal angle. */
 @keyframes petal-form {

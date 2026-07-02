@@ -83,6 +83,11 @@ export interface OrgContact {
   whatsapp: string;
 }
 
+export interface OrgAnnouncement {
+  enabled: boolean;
+  text: string;
+}
+
 export interface OrgSettings {
   brand: OrgBrand;
   contact: OrgContact;
@@ -92,6 +97,7 @@ export interface OrgSettings {
   upiId: string;
   upiPayeeName: string;
   plans: MembershipPlan[];
+  announcement: OrgAnnouncement;
 }
 
 export const DEFAULT_ORG_SETTINGS: OrgSettings = {
@@ -125,6 +131,7 @@ export const DEFAULT_ORG_SETTINGS: OrgSettings = {
       ],
     },
   ],
+  announcement: { enabled: false, text: "" },
 };
 
 export function withOrgDefaults(data: Partial<OrgSettings> | null): OrgSettings {
@@ -147,6 +154,10 @@ export function withOrgDefaults(data: Partial<OrgSettings> | null): OrgSettings 
     upiId: data.upiId || DEFAULT_ORG_SETTINGS.upiId,
     upiPayeeName: data.upiPayeeName || DEFAULT_ORG_SETTINGS.upiPayeeName,
     plans: data.plans?.length ? data.plans : DEFAULT_ORG_SETTINGS.plans,
+    announcement: {
+      enabled: data.announcement?.enabled ?? false,
+      text: data.announcement?.text ?? "",
+    },
   };
 }
 

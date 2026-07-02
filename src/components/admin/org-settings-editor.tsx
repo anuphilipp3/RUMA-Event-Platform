@@ -33,6 +33,8 @@ interface SettingsForm {
   signatoryName: string;
   upiId: string;
   upiPayeeName: string;
+  announcementEnabled: boolean;
+  announcementText: string;
   plans: PlanForm[];
 }
 
@@ -49,6 +51,8 @@ function toForm(s: OrgSettings): SettingsForm {
     signatoryName: s.signatoryName,
     upiId: s.upiId,
     upiPayeeName: s.upiPayeeName,
+    announcementEnabled: s.announcement.enabled,
+    announcementText: s.announcement.text,
     plans: s.plans.map((p) => ({
       key: p.key,
       name: p.name,
@@ -75,6 +79,10 @@ function toSettings(f: SettingsForm): OrgSettings {
     signatoryName: f.signatoryName.trim(),
     upiId: f.upiId.trim(),
     upiPayeeName: f.upiPayeeName.trim(),
+    announcement: {
+      enabled: f.announcementEnabled,
+      text: f.announcementText.trim(),
+    },
     plans: f.plans.map((p) => ({
       key: p.key as OrgSettings["plans"][number]["key"],
       name: p.name.trim(),
@@ -182,6 +190,32 @@ export function OrgSettingsEditor({ settings }: { settings: OrgSettings }) {
         </div>
         <p className="mt-2 text-caption text-text-muted">
           Shown on the public Contact page. Leave any field blank to hide it.
+        </p>
+      </Card>
+
+      <Card className="p-5">
+        <h2 className="mb-4 text-card-title font-semibold text-charcoal">
+          Announcement banner
+        </h2>
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            {...register("announcementEnabled")}
+            className="h-5 w-5 rounded border-field accent-kerala-600"
+          />
+          <span className="text-body text-charcoal">
+            Show a scrolling announcement at the top of the site
+          </span>
+        </label>
+        <div className="mt-4">
+          <Label>Announcement text</Label>
+          <Input
+            {...register("announcementText")}
+            placeholder="🌸 Onam Sadhya bookings now open — members get 20% off!"
+          />
+        </div>
+        <p className="mt-2 text-caption text-text-muted">
+          Keep it short and punchy. Turn it off any time by unchecking the box above.
         </p>
       </Card>
 
