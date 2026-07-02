@@ -35,6 +35,8 @@ function eventColumns(input: EventFormInput) {
     background_color: input.backgroundColor,
     lucky_draw_enabled: input.luckyDrawEnabled,
     coupons_per_paid_ticket: input.couponsPerPaidTicket,
+    member_discount_enabled: input.memberDiscountEnabled,
+    member_discount_percent: input.memberDiscountPercent,
     schedule: input.schedule,
   };
 }

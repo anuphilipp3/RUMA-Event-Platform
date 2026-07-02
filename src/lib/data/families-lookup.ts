@@ -10,6 +10,7 @@ export interface FamilyMatch {
   phone: string;
   email: string | null;
   memberCount: number;
+  isActiveMember: boolean;
 }
 
 /**
@@ -25,7 +26,7 @@ export async function findFamilyByPhone(
   const supabase = createAdminSupabase();
   const { data, error } = await supabase
     .from("families")
-    .select("id, family_name, primary_contact, flat_number, phone, email, members(id)")
+    .select("id, family_name, primary_contact, flat_number, phone, email, status, members(id)")
     .eq("phone", clean)
     .not("status", "in", "(rejected,archived)")
     .order("created_at", { ascending: false })
@@ -42,5 +43,6 @@ export async function findFamilyByPhone(
     phone: data.phone,
     email: data.email,
     memberCount: members.length,
+    isActiveMember: data.status === "active",
   };
 }

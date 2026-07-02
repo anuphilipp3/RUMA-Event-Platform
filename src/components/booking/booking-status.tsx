@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Gift, Ticket as TicketIcon } from "lucide-react";
+import { Download, Gift, BadgePercent, Ticket as TicketIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StatusBanner } from "./status-banner";
@@ -67,6 +67,16 @@ export async function BookingStatus({ booking }: { booking: BookingBundle }) {
             </li>
           ))}
         </ul>
+        {Number(registration.discount_amount) > 0 && (
+          <div className="mt-2 flex justify-between text-small">
+            <span className="flex items-center gap-1.5 font-medium text-kerala-700">
+              <BadgePercent className="h-4 w-4" /> RUMA member discount
+            </span>
+            <span className="font-semibold text-kerala-700">
+              −{formatINR(Number(registration.discount_amount))}
+            </span>
+          </div>
+        )}
         <div className="mt-3 flex justify-between border-t border-gold/20 pt-3">
           <span className="font-medium text-charcoal">Total</span>
           <span className="text-card-title font-bold text-kerala-700">

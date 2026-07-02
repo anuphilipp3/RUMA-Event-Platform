@@ -46,7 +46,7 @@ const WIZARD = ["Basics", "Registration", "Tickets", "Review"];
 const STEP_FIELDS: (keyof EventFormInput)[][] = [
   ["name", "slug", "venue", "description", "eventType", "startDate", "endDate"],
   ["status", "registrationStart", "registrationEnd", "capacity"],
-  ["upiId", "upiPayeeName", "ticketTypes", "couponsPerPaidTicket"],
+  ["upiId", "upiPayeeName", "ticketTypes", "couponsPerPaidTicket", "memberDiscountPercent"],
   [],
 ];
 
@@ -320,6 +320,20 @@ export function EventForm({
             <Field label="Coupons per paid ticket">
               <Input type="number" min={0} step={1} className="max-w-32" {...register("couponsPerPaidTicket")} />
             </Field>
+          </Section>
+
+          <Section title="RUMA member discount">
+            <label className="flex items-center gap-3">
+              <input type="checkbox" {...register("memberDiscountEnabled")} className="h-5 w-5 rounded border-field accent-kerala-600" />
+              <span className="text-body text-charcoal">Give registered RUMA members a discount on this event</span>
+            </label>
+            <Field label="Discount percent (%)">
+              <Input type="number" min={0} max={100} step={1} className="max-w-32" {...register("memberDiscountPercent")} />
+            </Field>
+            <p className="text-small text-text-secondary">
+              Applies to a member family&apos;s tickets up to the number of people in their
+              membership. Extra guests pay full price.
+            </p>
           </Section>
 
           <Section

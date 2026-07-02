@@ -60,6 +60,8 @@ export const eventFormSchema = z
     backgroundColor: z.string().regex(HEX, "Invalid colour"),
     luckyDrawEnabled: z.boolean(),
     couponsPerPaidTicket: z.coerce.number().int().min(0).max(100),
+    memberDiscountEnabled: z.boolean(),
+    memberDiscountPercent: z.coerce.number().int().min(0).max(100),
     schedule: z.array(scheduleItemInputSchema).max(30),
     ticketTypes: z
       .array(ticketTypeInputSchema)
@@ -123,6 +125,8 @@ export function blankEventValues(): EventFormInput {
     backgroundColor: "#FFFDF8",
     luckyDrawEnabled: false,
     couponsPerPaidTicket: 1,
+    memberDiscountEnabled: false,
+    memberDiscountPercent: 20,
     schedule: [],
     ticketTypes: [
       { name: "Adult", category: "adult", ageRule: "Ages 13 and above", price: 500 },
@@ -161,6 +165,8 @@ export function eventToFormValues(
     backgroundColor: event.background_color,
     luckyDrawEnabled: event.lucky_draw_enabled,
     couponsPerPaidTicket: event.coupons_per_paid_ticket,
+    memberDiscountEnabled: event.member_discount_enabled,
+    memberDiscountPercent: event.member_discount_percent,
     schedule: (event.schedule as ScheduleItem[]) ?? [],
     ticketTypes: event.ticket_types.map((t) => ({
       name: t.name,

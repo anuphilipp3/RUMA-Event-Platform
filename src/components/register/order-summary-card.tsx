@@ -1,11 +1,20 @@
-import { Gift } from "lucide-react";
+import { Gift, BadgePercent } from "lucide-react";
 import { formatINR } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import type { OrderSummary } from "@/lib/domain/pricing";
 
-export function OrderSummaryCard({ summary }: { summary: OrderSummary }) {
+export function OrderSummaryCard({
+  summary,
+  discountAmount = 0,
+  discountPercent,
+}: {
+  summary: OrderSummary;
+  discountAmount?: number;
+  discountPercent?: number;
+}) {
   const paidLines = summary.lines.filter((l) => !l.isFree);
   const freeLines = summary.lines.filter((l) => l.isFree);
+  const net = Math.max(0, summary.totalPayable - discountAmount);
 
   return (
     <Card className="overflow-hidden border-gold/30">
@@ -40,12 +49,24 @@ export function OrderSummaryCard({ summary }: { summary: OrderSummary }) {
           </div>
         )}
 
+        {discountAmount > 0 && (
+          <div className="flex items-center justify-between rounded-md bg-kerala-600/10 px-3 py-2 text-small">
+            <span className="flex items-center gap-2 font-medium text-kerala-700">
+              <BadgePercent className="h-4 w-4" />
+              RUMA member discount{discountPercent ? ` (${discountPercent}%)` : ""}
+            </span>
+            <span className="font-semibold text-kerala-700">
+              −{formatINR(discountAmount)}
+            </span>
+          </div>
+        )}
+
         <div className="mt-1 flex items-center justify-between border-t border-gold/20 pt-3">
           <span className="text-body font-medium text-charcoal">
             Total Payable
           </span>
           <span className="text-page-title font-bold text-kerala-700">
-            {formatINR(summary.totalPayable)}
+            {formatINR(net)}
           </span>
         </div>
       </div>

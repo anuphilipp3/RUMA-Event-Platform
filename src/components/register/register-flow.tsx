@@ -14,7 +14,7 @@ import { TicketSelector } from "./ticket-selector";
 import { OrderSummaryCard } from "./order-summary-card";
 import { PaymentStep } from "./payment-step";
 import { SuccessStep } from "./success-step";
-import { buildSummary } from "@/lib/domain/pricing";
+import { buildSummary, memberDiscount } from "@/lib/domain/pricing";
 import type { RegistrationInput } from "@/lib/domain/validation";
 import { submitRegistration } from "@/app/e/[slug]/register/actions";
 import type { EventWithTicketTypes } from "@/lib/data/events";
@@ -42,6 +42,10 @@ export function RegisterFlow({
     useState<RegistrationInput>(EMPTY_REGISTRANT);
   const [familyId, setFamilyId] = useState<string | undefined>(undefined);
   const [familyName, setFamilyName] = useState<string | null>(null);
+  const [memberInfo, setMemberInfo] = useState<{
+    count: number;
+    active: boolean;
+  } | null>(null);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [result, setResult] = useState<CreateRegistrationResult | null>(null);
   const [pending, startTransition] = useTransition();
@@ -63,6 +67,25 @@ export function RegisterFlow({
       quantities,
     ],
   );
+
+  const previewDiscount = useMemo(() => {
+    if (
+      !event.member_discount_enabled ||
+      !memberInfo?.active ||
+      memberInfo.count <= 0
+    ) {
+      return 0;
+    }
+    return memberDiscount(summary, {
+      percent: event.member_discount_percent,
+      eligibleUnits: memberInfo.count,
+    }).discountAmount;
+  }, [
+    event.member_discount_enabled,
+    event.member_discount_percent,
+    memberInfo,
+    summary,
+  ]);
 
   const stepIndex: Record<Step, number> = {
     family: 0,
@@ -129,6 +152,10 @@ export function RegisterFlow({
               });
               setFamilyId(family.id);
               setFamilyName(family.familyName);
+              setMemberInfo({
+                count: family.memberCount,
+                active: family.isActiveMember,
+              });
               setStep("details");
             }}
             onGuest={() => {
@@ -180,7 +207,11 @@ export function RegisterFlow({
             />
             {summary.totalTickets > 0 && (
               <div className="mt-6">
-                <OrderSummaryCard summary={summary} />
+                <OrderSummaryCard
+                summary={summary}
+                discountAmount={previewDiscount}
+                discountPercent={event.member_discount_percent}
+              />
               </div>
             )}
             <StepNav
@@ -203,13 +234,19 @@ export function RegisterFlow({
                   <ReviewRow label="Email" value={registrant.email} />
                 )}
               </dl>
-              <OrderSummaryCard summary={summary} />
+              <OrderSummaryCard
+                summary={summary}
+                discountAmount={previewDiscount}
+                discountPercent={event.member_discount_percent}
+              />
             </div>
             <StepNav
               onBack={() => setStep("tickets")}
               onNext={createRegistration}
               nextLabel={
-                summary.totalPayable > 0 ? "Make Payment" : "Submit Registration"
+                summary.totalPayable - previewDiscount > 0
+                  ? "Make Payment"
+                  : "Submit Registration"
               }
               busy={pending}
             />

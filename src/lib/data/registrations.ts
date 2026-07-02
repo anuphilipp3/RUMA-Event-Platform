@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createAdminSupabase } from "@/lib/supabase/admin";
-import { buildSummary, type SelectionItem } from "@/lib/domain/pricing";
+import { buildSummary, memberDiscount, type SelectionItem } from "@/lib/domain/pricing";
 import { generateBookingReference } from "@/lib/domain/references";
 import { createRegistrationSchema } from "@/lib/domain/validation";
 import type {
@@ -16,6 +16,7 @@ export interface CreateRegistrationResult {
   bookingReference: string;
   registrationId: string;
   totalPayable: number;
+  discountAmount: number;
   requiresPayment: boolean;
   upiId: string | null;
   upiPayeeName: string | null;
@@ -42,7 +43,7 @@ export async function createRegistration(input: {
   const { data: event, error: eventError } = await supabase
     .from("events")
     .select(
-      "id, status, end_date, registration_start, registration_end, upi_id, upi_payee_name, coupons_per_paid_ticket, lucky_draw_enabled",
+      "id, status, end_date, registration_start, registration_end, upi_id, upi_payee_name, coupons_per_paid_ticket, lucky_draw_enabled, member_discount_enabled, member_discount_percent",
     )
     .eq("id", parsed.eventId)
     .maybeSingle();
@@ -83,6 +84,27 @@ export async function createRegistration(input: {
     throw new Error("Select at least one ticket to continue.");
   }
 
+  // RUMA-member discount: only for events that enable it, and only when the
+  // registrant is tied to an ACTIVE member family. Cap = that family's member
+  // count (verified server-side, never trusted from the client).
+  let discountAmount = 0;
+  if (event.member_discount_enabled && parsed.familyId) {
+    const { data: family } = await supabase
+      .from("families")
+      .select("status, members(id)")
+      .eq("id", parsed.familyId)
+      .maybeSingle();
+    const memberCount =
+      (family?.members as unknown as { id: string }[] | null)?.length ?? 0;
+    if (family?.status === "active" && memberCount > 0) {
+      discountAmount = memberDiscount(summary, {
+        percent: event.member_discount_percent,
+        eligibleUnits: memberCount,
+      }).discountAmount;
+    }
+  }
+  const netPayable = Math.max(0, summary.totalPayable - discountAmount);
+
   const bookingReference = generateBookingReference();
 
   const { data: registration, error: regError } = await supabase
@@ -96,7 +118,8 @@ export async function createRegistration(input: {
       phone: parsed.registrant.phone,
       email: parsed.registrant.email || null,
       status: "pending",
-      total_amount: summary.totalPayable,
+      total_amount: netPayable,
+      discount_amount: discountAmount,
     })
     .select("id")
     .single();
@@ -120,8 +143,9 @@ export async function createRegistration(input: {
   return {
     bookingReference,
     registrationId: registration.id,
-    totalPayable: summary.totalPayable,
-    requiresPayment: summary.totalPayable > 0,
+    totalPayable: netPayable,
+    discountAmount,
+    requiresPayment: netPayable > 0,
     upiId: event.upi_id,
     upiPayeeName: event.upi_payee_name,
   };

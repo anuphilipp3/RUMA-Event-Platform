@@ -109,6 +109,8 @@ export interface Database {
           featured: boolean;
           lucky_draw_enabled: boolean;
           coupons_per_paid_ticket: number;
+          member_discount_enabled: boolean;
+          member_discount_percent: number;
           created_at: string;
         };
         Insert: {
@@ -136,6 +138,8 @@ export interface Database {
           featured?: boolean;
           lucky_draw_enabled?: boolean;
           coupons_per_paid_ticket?: number;
+          member_discount_enabled?: boolean;
+          member_discount_percent?: number;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["events"]["Insert"]>;
@@ -177,6 +181,7 @@ export interface Database {
           email: string | null;
           status: RegistrationStatus;
           total_amount: number;
+          discount_amount: number;
           created_at: string;
         };
         Insert: {
@@ -190,6 +195,7 @@ export interface Database {
           email?: string | null;
           status?: RegistrationStatus;
           total_amount?: number;
+          discount_amount?: number;
           created_at?: string;
         };
         Update: Partial<

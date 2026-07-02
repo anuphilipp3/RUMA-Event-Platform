@@ -68,3 +68,40 @@ export function buildSummary(
     luckyDrawCoupons: paidTickets * couponsPerPaidTicket,
   };
 }
+
+export interface MemberDiscount {
+  percent: number; // e.g. 20 for 20% off
+  eligibleUnits: number; // cap: how many paid tickets qualify (= family member count)
+}
+
+export interface DiscountResult {
+  discountAmount: number; // whole rupees taken off the order
+  discountedUnits: number; // how many ticket units were discounted
+}
+
+/**
+ * RUMA-member discount. Applies `percent` off up to `eligibleUnits` paid ticket
+ * units — the most expensive units first, so members get the best benefit.
+ * Extra tickets beyond the cap pay full price. Free tickets are never counted.
+ */
+export function memberDiscount(
+  summary: OrderSummary,
+  discount: MemberDiscount | null,
+): DiscountResult {
+  if (!discount || discount.percent <= 0 || discount.eligibleUnits <= 0) {
+    return { discountAmount: 0, discountedUnits: 0 };
+  }
+
+  const units: number[] = [];
+  for (const line of summary.lines) {
+    if (line.isFree) continue;
+    for (let i = 0; i < line.quantity; i++) units.push(line.unitPrice);
+  }
+  units.sort((a, b) => b - a);
+
+  const take = Math.min(discount.eligibleUnits, units.length);
+  const base = units.slice(0, take).reduce((sum, price) => sum + price, 0);
+  const discountAmount = Math.round((base * discount.percent) / 100);
+
+  return { discountAmount, discountedUnits: take };
+}
