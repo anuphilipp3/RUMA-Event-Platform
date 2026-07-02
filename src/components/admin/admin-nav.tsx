@@ -59,12 +59,12 @@ export function AdminNav({
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-gold/20 bg-cream/40 p-4 md:flex">
+      {/* Desktop sidebar — pinned to the viewport so sign-out stays anchored */}
+      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-gold/20 bg-cream/40 p-4 md:flex">
         <Link href="/admin" className="mb-6 px-2 text-kerala-700">
           <RumaMark name={brand.name} tagline={brand.tagline} logoUrl={brand.logoUrl} />
         </Link>
-        <nav className="flex-1 space-y-1">
+        <nav className="-mr-2 flex-1 space-y-1 overflow-y-auto pr-2">
           {links.map((l) => (
             <NavItem
               key={l.href}
@@ -76,7 +76,7 @@ export function AdminNav({
             />
           ))}
         </nav>
-        <div className="border-t border-gold/20 pt-3">
+        <div className="shrink-0 border-t border-gold/20 pt-3">
           <p className="truncate px-2 text-caption text-text-muted">{email}</p>
           <form action={signOutAction}>
             <button className="mt-1 flex w-full items-center gap-2 rounded-md px-2 py-2 text-small text-text-secondary hover:bg-cream">
@@ -119,7 +119,7 @@ export function AdminNav({
                 href={l.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-[10px] font-medium leading-tight transition-colors",
+                  "flex flex-col items-center gap-1 rounded-md px-1 py-2 text-center text-[10px] font-medium leading-tight transition-colors",
                   active
                     ? "bg-kerala-600 text-white"
                     : "text-text-muted hover:bg-cream",
@@ -136,7 +136,7 @@ export function AdminNav({
           action={signOutAction}
           className="shrink-0 border-t border-gold/15 px-1.5 py-2"
         >
-          <button className="flex w-full flex-col items-center gap-1 rounded-lg px-1 py-2 text-[10px] font-medium text-text-muted transition-colors hover:bg-cream">
+          <button className="flex w-full flex-col items-center gap-1 rounded-md px-1 py-2 text-[10px] font-medium text-text-muted transition-colors hover:bg-cream">
             <LogOut className="h-5 w-5" /> Sign out
           </button>
         </form>
